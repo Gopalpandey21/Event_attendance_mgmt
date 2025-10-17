@@ -1,0 +1,82 @@
+.homepage-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: linear-gradient(180deg, #f7fbff 0%, #eef6ff 100%);
+  font-family: Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #0f172a;
+}
+
+.homepage-title {
+  font-size: 2rem;
+  margin: 0 0 1.5rem 0;
+  text-align: center;
+  letter-spacing: 0.2px;
+}
+
+.homepage-cards {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 760px;
+}
+
+.homepage-card {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 200px;
+  padding: 1.1rem 1.4rem;
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 6px 18px rgba(12, 24, 56, 0.08);
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+  user-select: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.participant-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
+  border: 1px solid rgba(14, 165, 233, 0.12);
+  color: #0369a1;
+}
+
+.admin-card {
+  background: linear-gradient(180deg, #ffffff 0%, #fff7ed 100%);
+  border: 1px solid rgba(245, 158, 11, 0.12);
+  color: #92400e;
+}
+
+.homepage-card:focus,
+.homepage-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 12px 30px rgba(12, 24, 56, 0.12);
+  outline: none;
+}
+
+.homepage-card span {
+  pointer-events: none;
+}
+
+@media (max-width: 560px) {
+  .homepage-title {
+    font-size: 1.25rem;
+  }
+  .homepage-card {
+    min-width: 100%;
+    padding: 0.9rem;
+    border-radius: 8px;
+  }
+  .homepage-cards {
+    gap: 0.75rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

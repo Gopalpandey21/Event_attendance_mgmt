@@ -1,0 +1,80 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+const AdminLoginPage = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(''); // State to hold login errors
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError(''); // Clear previous errors
+
+    try {
+      const response = await fetch('http://localhost:5000/api/users/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // If the server sends an error (e.g., wrong password, not an admin)
+        throw new Error(data.message || 'Login failed.');
+      }
+
+      // In a real app, you would save the token from 'data.token'
+      console.log('Admin login successful:', data);
+
+      // Redirect to the admin dashboard on success
+      navigate('/admin/dashboard');
+
+    } catch (err) {
+      // Set the error message to display to the user
+      setError(err.message);
+    }
+  };
+  
+  // You can improve the styles for a better look
+  const styles = {
+    container: { display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#f8f9fa' },
+    formWrapper: { display: 'flex', flexDirection: 'column', gap: '1rem', padding: '2rem', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', width: '350px' },
+    header: { textAlign: 'center', marginBottom: '1rem' },
+    input: { padding: '0.8rem', borderRadius: '5px', border: '1px solid #ced4da' },
+    button: { padding: '0.8rem', cursor: 'pointer', backgroundColor: '#343a40', color: 'white', border: 'none', borderRadius: '5px', fontSize: '16px' },
+    error: { color: 'red', textAlign: 'center', marginTop: '10px' }
+  };
+
+  return (
+    <div style={styles.container}>
+      <form onSubmit={handleLogin} style={styles.formWrapper}>
+        <h2 style={styles.header}>Admin Login</h2>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          style={styles.input}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          style={styles.input}
+        />
+        <button type="submit" style={styles.button}>
+          Login
+        </button>
+        {/* Display error message if it exists */}
+        {error && <p style={styles.error}>{error}</p>}
+      </form>
+    </div>
+  );
+};
+
+export default AdminLoginPage;
