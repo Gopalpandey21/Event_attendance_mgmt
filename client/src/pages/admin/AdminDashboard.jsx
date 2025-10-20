@@ -24,12 +24,17 @@ const AdminDashboard = () => {
             'Authorization': `Bearer ${user.token}`,
           },
         });
+        
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch dashboard statistics.');
-        }
+       if (!response.ok) {
+  // If the server sends a 401 (Not authorized) or 403 (Forbidden)
+  const errorData = await response.json();
+  // THIS IS THE FIX: Throw the message from the server
+  throw new Error(errorData.message || 'Failed to fetch statistics.'); 
+}
 
         const data = await response.json();
+        console.log('Fetched admin stats:', data);
         setStats(data);
       } catch (err) {
         setError(err.message);

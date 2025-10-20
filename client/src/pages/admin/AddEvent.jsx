@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from '../../context/AuthContext'; // FIX: 1. Import useAuth
 
 const AddEvent = () => {
   // State to hold all form data in a single object
@@ -16,6 +17,8 @@ const AddEvent = () => {
   // New state for loading and error feedback
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  
+  const { user } = useAuth(); // FIX: 2. Get the logged-in admin's user data
 
   // A single handler for all text and radio inputs
   const handleChange = (e) => {
@@ -39,6 +42,13 @@ const AddEvent = () => {
     setLoading(true);
     setError('');
 
+    // FIX: 3. Check if admin is logged in
+    if (!user || !user.token) {
+        setError('You must be logged in as an admin to create an event.');
+        setLoading(false);
+        return;
+    }
+
     // Use FormData for multipart/form-data, which is required for file uploads
     const formData = new FormData();
     formData.append('title', eventData.title);
@@ -56,6 +66,10 @@ const AddEvent = () => {
     try {
       const response = await fetch('http://localhost:5000/api/events', {
         method: 'POST',
+        // FIX: 4. Add the Authorization header
+        headers: {
+            'Authorization': `Bearer ${user.token}`,
+        },
         body: formData, // The browser automatically sets the correct Content-Type for FormData
       });
 
@@ -78,6 +92,7 @@ const AddEvent = () => {
     }
   };
 
+  // --- Styles (no changes) ---
   const styles = {
     header: { fontSize: '28px', marginBottom: '25px', color: '#343a40' },
     formContainer: {

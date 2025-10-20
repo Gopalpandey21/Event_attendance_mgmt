@@ -1,7 +1,6 @@
 import React, { forwardRef } from 'react';
 
-// We use forwardRef to pass a 'ref' from the parent component down to the DOM element.
-// This allows the parent to get a direct handle on the certificate div for html2canvas.
+// This component is now just a VISUAL PREVIEW for the admin
 const CertificateTemplate = forwardRef(({ name, course, eventName, date }, ref) => {
   const styles = {
     certificateWrapper: {
@@ -22,7 +21,27 @@ const CertificateTemplate = forwardRef(({ name, course, eventName, date }, ref) 
     subtitle: { fontSize: '20px', margin: '10px 0' },
     body: { textAlign: 'center', margin: '40px 0' },
     mainText: { fontSize: '18px', lineHeight: '1.6' },
-    participantName: { fontSize: '36px', fontWeight: 'bold', color: '#785E2F', margin: '20px 0', borderBottom: '2px solid #ccc' },
+    
+    // --- FIX: Styles for the blank spaces ---
+    participantName: {
+      fontSize: '36px',
+      fontWeight: 'bold',
+      color: '#785E2F',
+      margin: '20px 0',
+      borderBottom: '2px solid #ccc',
+      minHeight: '40px' // Ensures the line is visible
+    },
+    participantCourse: {
+      fontSize: '20px',
+      color: '#555',
+      margin: '0',
+      minHeight: '25px' // Ensures space is visible
+    },
+    eventNameText: { // Style for the static text
+      fontSize: '18px', 
+      lineHeight: '1.6'
+    },
+    
     footer: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
     signatureBlock: { textAlign: 'center' },
     signatureLine: { borderTop: '2px solid #333', width: '200px', margin: '0 auto' },
@@ -30,7 +49,6 @@ const CertificateTemplate = forwardRef(({ name, course, eventName, date }, ref) 
   };
 
   return (
-    // The ref is attached here
     <div ref={ref} style={styles.certificateWrapper}>
       <header style={styles.header}>
         <h1 style={styles.title}>Certificate of Completion</h1>
@@ -38,10 +56,12 @@ const CertificateTemplate = forwardRef(({ name, course, eventName, date }, ref) 
       </header>
       
       <main style={styles.body}>
-        <div style={styles.participantName}>{name}</div>
-        <p style={styles.mainText}>
-          for successfully completing the <strong>{eventName}</strong>.<br />
-          This demonstrates their commitment and skills in the field.
+        {/* --- FIX: We show blank spaces, NOT dummy text --- */}
+        <div style={styles.participantName}>&nbsp;</div>
+        <div style={styles.participantCourse}>&nbsp;</div> 
+        
+        <p style={styles.eventNameText}>
+          for successfully completing the <strong>EVENT NAME WILL BE HERE</strong>.
         </p>
       </main>
       
@@ -51,7 +71,8 @@ const CertificateTemplate = forwardRef(({ name, course, eventName, date }, ref) 
           <p style={styles.signatureLabel}>Event Coordinator</p>
         </div>
         <div>
-          <p>Date: {date}</p>
+          {/* We can leave the date text here as a placeholder */}
+          <p>Date: Date will be added here</p>
         </div>
       </footer>
     </div>

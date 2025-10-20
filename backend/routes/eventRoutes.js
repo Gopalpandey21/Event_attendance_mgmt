@@ -1,14 +1,26 @@
+// routes/eventRoutes.js
 const express = require('express');
 const router = express.Router();
-// 1. Import both functions from the controller
-const { createEvent, getAllEvents,registerForEvent } = require('../controllers/eventController');
+const { createEvent, getAllEvents, registerForEvent,deleteEvent,getEventById,updateEvent,uploadCertificateTemplate } = require('../controllers/eventController');
 const upload = require('../middleware/uploadMiddleware');
-const { protect } = require('../middleware/authMiddleware');
-// Define the route for creating an event (POST request)
-router.post('/', upload.single('image'), createEvent);
+const { protect, admin } = require('../middleware/authMiddleware'); // FIX: Import admin middleware
 
-// 2. Define the route for getting all events (GET request)
+// FIX: Added 'protect' and 'admin' middleware. Only logged-in admins can create events.
+router.post('/', protect, admin, upload.single('image'), createEvent);
+
 router.get('/', getAllEvents);
 router.post('/:id/register', protect, registerForEvent);
+
+// Route for deleting an event (Admin only)
+router.delete('/:id', protect, admin, deleteEvent);
+
+// Route for getting a SINGLE event (Public)
+router.get('/:id', getEventById); // <-- ADD THIS
+
+// Route for updating an event (Admin only)
+router.put('/:id', protect, admin, upload.single('image'), updateEvent);
+
+
+router.put('/:id/upload-template', protect, admin, upload.single('template'), uploadCertificateTemplate);
 
 module.exports = router;

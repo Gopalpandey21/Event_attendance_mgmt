@@ -18,6 +18,10 @@ app.use(cors());
 // Middleware to parse JSON bodies
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+
 // --- API Routes ---
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/events', require('./routes/eventRoutes'));
@@ -25,6 +29,8 @@ app.use('/api/events', require('./routes/eventRoutes'));
 app.use('/api/registrations', require('./routes/registrationRoutes'));
 app.use('/api/admin', require('./routes/adminApiRoutes'));
 
+
+app.use('/api/certificate', require('./routes/certificateRoutes'));
 // --- Serve Uploaded Files Statically ---
 // 2. This line will now work correctly
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));

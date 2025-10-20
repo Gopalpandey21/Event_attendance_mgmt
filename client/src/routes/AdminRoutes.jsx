@@ -5,31 +5,32 @@ import AdminLayout from '../components/admin/AdminLayout';
 import AdminLoginPage from '../pages/admin/AdminLoginPage';
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import AddEvent from '../pages/admin/AddEvent';
-import DeleteEvent from '../pages/admin/DeleteEvent';
-import GenerateCertificate from '../pages/admin/GenerateCertificate';
+// import DeleteEvent from '../pages/admin/DeleteEvent'; // <-- Change this
+import ManageEvents from '../pages/admin/ManageEvents'; // <-- To this
+import UpdateEventPage from '../pages/admin/UpdateEventPage'; // <-- Import new page
+import GenerateCertificate from '../pages/admin/TemplateDesigner';
 import AllAttendees from '../pages/admin/AllAttendees';
-import CheckInScanner from '../pages/admin/CheckInScanner'; // 1. Import the new component
+import CheckInScanner from '../pages/admin/CheckInScanner';
+import UploadCertificate from '../pages/admin/UploadCertificate'; // <-- 1. Import new page
+import TemplateDesigner from '../pages/admin/TemplateDesigner';
 
 const AdminRoutes = () => {
   return (
     <Routes>
-      {/* Standalone login page */}
       <Route path="login" element={<AdminLoginPage />} />
-
-      {/* Pages that share the admin layout */}
       <Route element={<AdminLayout />}>
         <Route path="dashboard" element={<AdminDashboard />} />
-        
-        {/* 2. Add the route for the scanner page */}
         <Route path="scanner" element={<CheckInScanner />} />
-
         <Route path="attendees" element={<AllAttendees />} />
+        
         <Route path="events/add" element={<AddEvent />} />
-        <Route path="events/delete" element={<DeleteEvent />} />
-        <Route path="certificates/generate" element={<GenerateCertificate />} />
-      </Route>
+        {/* <Route path="events/delete" element={<DeleteEvent />} /> {/* <-- Change this */}
+        <Route path="events/manage" element={<ManageEvents />} /> {/* <-- To this */}
+        <Route path="events/update/:id" element={<UpdateEventPage />} /> {/* <-- ADD THIS */}
 
-      {/* Redirect from the base /admin path to the dashboard */}
+        <Route path="certificates/generate" element={<TemplateDesigner />} />
+        <Route path="certificates/upload" element={<UploadCertificate />} />
+      </Route>
       <Route path="/" element={<Navigate to="dashboard" replace />} />
     </Routes>
   );

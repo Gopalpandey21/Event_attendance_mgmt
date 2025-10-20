@@ -1,33 +1,43 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext'; // 1. Import useAuth
 
 const AdminSidebar = () => {
-  // State to manage which dropdown is open
-  const [openDropdown, setOpenDropdown] = useState(''); // Can be 'events' or 'certificates'
+  const [openDropdown, setOpenDropdown] = useState('');
+  const navigate = useNavigate();
+  const { logout } = useAuth(); // 2. Get the global logout function
+
+  const logoutHandler = () => {
+    logout(); // 3. Call the context logout function
+    navigate('/admin/login');
+  };
 
   const toggleDropdown = (dropdownName) => {
-    // If the clicked dropdown is already open, close it. Otherwise, open it.
     setOpenDropdown(openDropdown === dropdownName ? '' : dropdownName);
   };
 
   const styles = {
+    // ... (your existing styles are all correct)
     sidebarContainer: {
       width: '240px',
       backgroundColor: '#343a40',
       color: 'white',
       height: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    nav: {
+      flexGrow: 1,
     },
     navList: {
       listStyle: 'none',
       padding: 0,
       margin: 0,
     },
-    // Main navigation item style
     navItem: {
       cursor: 'pointer',
       borderBottom: '1px solid #495057',
     },
-    // The clickable part of a nav item
     navLink: {
       color: '#adb5bd',
       textDecoration: 'none',
@@ -35,60 +45,63 @@ const AdminSidebar = () => {
       display: 'block',
       padding: '18px 25px',
     },
-    // Style for the active NavLink (top-level only)
     activeLink: {
       color: 'white',
       fontWeight: 'bold',
       backgroundColor: '#495057',
     },
-    // Style for the dropdown header (e.g., "Manage Events ▼")
     dropdownHeader: {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
     },
-    // The dropdown arrow
     dropdownArrow: {
       transition: 'transform 0.3s',
-      transform: 'rotate(0deg)', // Default state
+      transform: 'rotate(0deg)',
     },
-    // Rotate the arrow when the dropdown is open
     arrowOpen: {
       transform: 'rotate(90deg)',
     },
-    // Container for the sub-menu links
     submenu: {
       listStyle: 'none',
       padding: 0,
       margin: 0,
-      backgroundColor: '#495057', // Slightly different background
-      maxHeight: '0', // Collapsed by default
+      backgroundColor: '#495057',
+      maxHeight: '0',
       overflow: 'hidden',
       transition: 'max-height 0.4s ease-out',
     },
-    // Expand the submenu when open
     submenuOpen: {
-      maxHeight: '200px', // Animate opening
+      maxHeight: '200px',
     },
-    // Individual link within the submenu
     submenuLink: {
       color: '#adb5bd',
       textDecoration: 'none',
       display: 'block',
-      padding: '15px 35px', // Indented padding
+      padding: '15px 35px',
       fontSize: '15px',
     },
     activeSubmenuLink: {
       color: 'white',
       fontWeight: 'bold',
+    },
+    logoutButton: {
+      cursor: 'pointer',
+      color: '#adb5bd',
+      textDecoration: 'none',
+      fontSize: '16px',
+      display: 'block',
+      padding: '18px 25px',
+      borderTop: '1px solid #495057',
+      backgroundColor: '#343a40',
     }
   };
 
   return (
     <aside style={styles.sidebarContainer}>
-      <nav>
+      <nav style={styles.nav}>
         <ul style={styles.navList}>
-          {/* Dashboard Link (No Dropdown) */}
+          {/* Dashboard Link */}
           <li style={styles.navItem}>
             <NavLink
               to="/admin/dashboard"
@@ -100,7 +113,7 @@ const AdminSidebar = () => {
             </NavLink>
           </li>
           
-          {/* ✅ ADDED: Scanner Link */}
+          {/* Scanner Link */}
           <li style={styles.navItem}>
             <NavLink
               to="/admin/scanner"
@@ -112,7 +125,7 @@ const AdminSidebar = () => {
             </NavLink>
           </li>
 
-          {/* All Attendees Link */}
+          {/* FIX: ADDED "All Attendees" LINK */}
           <li style={styles.navItem}>
             <NavLink
               to="/admin/attendees"
@@ -138,7 +151,8 @@ const AdminSidebar = () => {
                 <NavLink to="/admin/events/add" style={({isActive}) => isActive ? {...styles.submenuLink, ...styles.activeSubmenuLink} : styles.submenuLink}>Add Event</NavLink>
               </li>
               <li>
-                <NavLink to="/admin/events/delete" style={({isActive}) => isActive ? {...styles.submenuLink, ...styles.activeSubmenuLink} : styles.submenuLink}>Delete Event</NavLink>
+                {/* FIX: Changed this link to point to the new Manage page */}
+                <NavLink to="/admin/events/manage" style={({isActive}) => isActive ? {...styles.submenuLink, ...styles.activeSubmenuLink} : styles.submenuLink}>Manage Events</NavLink>
               </li>
             </ul>
           </li>
@@ -163,6 +177,18 @@ const AdminSidebar = () => {
           </li>
         </ul>
       </nav>
+
+      {/* Logout Button */}
+      <div>
+        <div
+          style={styles.logoutButton}
+          onClick={logoutHandler}
+          onMouseOver={(e) => e.currentTarget.style.color = 'white'}
+          onMouseOut={(e) => e.currentTarget.style.color = '#adb5bd'}
+        >
+          Logout
+        </div>
+      </div>
     </aside>
   );
 };

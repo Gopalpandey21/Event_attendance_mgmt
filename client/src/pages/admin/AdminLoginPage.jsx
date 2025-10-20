@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext'; // FIX: 1. Import useAuth
 
 const AdminLoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(''); // State to hold login errors
   const navigate = useNavigate();
+  const { login } = useAuth(); // FIX: 2. Get the login function from context
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -25,8 +27,8 @@ const AdminLoginPage = () => {
         throw new Error(data.message || 'Login failed.');
       }
 
-      // In a real application, you would save the token from 'data.token'
-      console.log('Admin login successful:', data);
+      // FIX: 3. Save the admin's data to the global context
+      login(data);
 
       // Redirect to the admin dashboard upon successful login
       navigate('/admin/dashboard');
@@ -37,7 +39,7 @@ const AdminLoginPage = () => {
     }
   };
   
-  // Improved styles for a cleaner look
+  // --- Styles (no changes) ---
   const styles = {
     container: { display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#f8f9fa' },
     formWrapper: { display: 'flex', flexDirection: 'column', gap: '1rem', padding: '2rem', backgroundColor: 'white', border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', width: '350px' },

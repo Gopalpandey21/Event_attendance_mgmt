@@ -1,40 +1,34 @@
+// controllers/registrationController.js
 const Registration = require('../models/Registration');
-const Attendance = require('../models/Attendance'); // 1. Import the new Attendance model
 
 /**
- * @desc    Check in a user by creating an attendance record
+ * @desc    Check in a user by updating their registration record
  * @route   PATCH /api/registrations/:id/check-in
  * @access  Private (Admin)
  */
 const checkInUser = async (req, res) => {
-  const registrationId = req.params.id;
+  const { id: registrationId } = req.params;
 
   try {
-    // Step 1: Find the original registration to validate the QR code
     const registration = await Registration.findById(registrationId).populate('user', 'name');
 
     if (!registration) {
-      return res.status(404).json({ message: 'Registration not found. This QR code is invalid.' });
+      return res.status(404).json({ message: 'Registration not found. Invalid QR code.' });
     }
 
-    // Step 2: Check if an attendance record for this registration already exists
-    const existingAttendance = await Attendance.findOne({ registration: registrationId });
-
-    if (existingAttendance) {
-      return res.status(400).json({ 
-        message: `${registration.user.name} was already checked in at ${existingAttendance.checkInTime.toLocaleTimeString()}` 
+    // FIX: Check if the checkInTime field already exists
+    if (registration.checkInTime) {
+      return res.status(400).json({
+        message: `${registration.user.name} was already checked in at ${registration.checkInTime.toLocaleTimeString()}`,
       });
     }
 
-    // Step 3: Create a new document in the Attendance collection
-    await Attendance.create({
-      registration: registrationId,
-      user: registration.user._id,   // Get user ID from the populated registration
-      event: registration.event, // Get event ID from the registration
-    });
+    // FIX: Update the existing registration record with the check-in time
+    registration.checkInTime = new Date();
+    await registration.save();
 
-    res.status(200).json({ 
-      message: `Check-in successful for ${registration.user.name}` 
+    res.status(200).json({
+      message: `Check-in successful for ${registration.user.name}`,
     });
 
   } catch (error) {
@@ -43,6 +37,7 @@ const checkInUser = async (req, res) => {
   }
 };
 
+
 /**
  * @desc    Get all attendees (all checked-in registrations)
  * @route   GET /api/registrations/attendees
@@ -50,18 +45,20 @@ const checkInUser = async (req, res) => {
  */
 const getAllAttendees = async (req, res) => {
   try {
-    // Find all registrations where the checkInTime field exists and is not null
+    // FIX: This query now works correctly because we are checking the `checkInTime` field
     const attendees = await Registration.find({ checkInTime: { $ne: null } })
-      .sort({ checkInTime: -1 }) // Show most recent check-ins first
-      .populate('user', 'name email')   // Get name and email from the linked User model
-      .populate('event', 'title');    // Get the title from the linked Event model
+      .sort({ checkInTime: -1 })
+      .populate('user', 'name email')
+      .populate('event', 'title');
 
     res.json(attendees);
   } catch (error) {
     res.status(500).json({ message: 'Server error fetching attendees.' });
   }
 };
-module.exports = { 
+
+
+module.exports = {
   checkInUser,
-  getAllAttendees 
+  getAllAttendees,
 };
